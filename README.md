@@ -11,21 +11,24 @@ It is based on data from a file which is catagorised has data from a training da
 
 ## Class Descriptions
 
-### FileProcessor Class
-The purpose of this class is to have all the information to do with file data.
-This means *opening* the file, *reading* it and *writing* to it. It also holds the *frequency table* data inside.
+### FileProcessor Class:
+The purpose of this class is to handle reading and writing from the frequency table
+This means *opening* the file, *reading* it and *writing* to it. It also builds a *frequency table* data inside.
 
-### MyWindow Class
-The purpose of this class is to *display* all the text fields and buttons on the screen and allows users to add more data to the csv file.
+### MyWindow Class:
+The main GUI class and the purpose of it is to *display* all the text fields and buttons on the screen and allows users to add more data to the csv file.
 This class also *displays* all the predictive data for the student features, this means containing the display version of the frequency table, and also having an option to check what chance a student has of graduating
 
-### Student
-The purpose of this class is to *take in* student information and *format* the new student data from the user to append into the file.
+### Student:
+A model class representing one student's data and purpose of it is to *take in* student information and *format* the new student data from the user to append into the file.
 
 
-### Control
-The purpose of this class is to *display* the screen with all the details of it from the **MyWindow** table
+### Control:
+This is where the main method is and the purpose of this class is to *display* the screen with all the details of it from the **MyWindow** table
 
+---
+## Functionality
+-[x]
 
 ---
 
