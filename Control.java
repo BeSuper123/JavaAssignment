@@ -6,8 +6,6 @@
 
 public class Control {
     public static void main(String[] args) {
-        FileProcessor fp = new FileProcessor("data.csv");
-
         MyWindow screen = new MyWindow("Frequency Table");
     }
 }

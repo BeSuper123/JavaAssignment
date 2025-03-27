@@ -1,6 +1,6 @@
 /*
  Description: the purpose of this class is to hold all the details of the frequency table
- Author: Blesisng Ugochukwu
+ Author: Blessing Ugochukwu
  Date: 27/03/25
  */
 public class Student {
