@@ -28,7 +28,7 @@ This is where the main method is and the purpose of this class is to *display* t
 
 ---
 ## Functionality
--[x]
+- [x]
 
 ---
 
