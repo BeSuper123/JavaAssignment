@@ -52,54 +52,43 @@ public class FileProcessor {
     }
 
     public void frequencyTable() {
-        File fileHandler = openFile(); // Assuming openFile() returns a valid File object
-        int childPass = 0;
-        int childFail = 0;
-        int adultPass = 0;
-        int adultFail = 0;
-    
+        File fileHandler = openFile();
+        HashMap<String, Integer> frequencyMap = new HashMap<>();
+
         try (Scanner sc = new Scanner(fileHandler)) {
             if (sc.hasNextLine()) {
-                sc.nextLine();
+                sc.nextLine(); // skip header
             }
-    
+
             while (sc.hasNextLine()) {
                 String text = sc.nextLine();
                 String[] values = text.split(",");
-    
-                // Ensure line has the correct number of columns
+
                 if (values.length < 5) {
                     continue;
                 }
-    
-                String ageGroup = values[0].trim();
-                String examPassed = values[4].trim();
-    
-                if (ageGroup.equalsIgnoreCase("Child")) {
-                    if (examPassed.equalsIgnoreCase("Yes")) {
-                        childPass++;
-                    } else if (examPassed.equalsIgnoreCase("No")) {
-                        childFail++;
-                    }
-                } else if (ageGroup.equalsIgnoreCase("Adult")) {
-                    if (examPassed.equalsIgnoreCase("Yes")) {
-                        adultPass++;
-                    } else if (examPassed.equalsIgnoreCase("No")) {
-                        adultFail++;
-                    }
-                }
+
+                String attendance = values[0].trim();
+                String job = values[1].trim();
+                String submissions = values[2].trim();
+                String studyhours = values[3].trim();
+                String graduated = values[4].trim();
+
+                String key = attendance + "\t" + job + "\t" + submissions + "\t" + studyhours + "\t" + graduated;
+                frequencyMap.put(key, frequencyMap.getOrDefault(key, 0) + 1);
             }
         } catch (FileNotFoundException e) {
             System.err.println("File not found: " + fileHandler.getName());
         }
-    
-        // Print frequency table
-        System.out.println("\n----Frequency Table----");
-        System.out.println("Child Pass: " + childPass);
-        System.out.println("Child Fail: " + childFail);
-        System.out.println("Adult Pass: " + adultPass);
-        System.out.println("Adult Fail: " + adultFail);
 
+
+        
+        // Print frequency table
+        System.out.println("\n\t----Frequency Table----");
+        for (Map.Entry<String, Integer> entry : frequencyMap.entrySet()) {
+            double percentage = ( entry.getValue() / 200.0) * 100;
+            System.out.println(entry.getKey() + " | " + percentage + "%");
+        }
     }
 }
 
