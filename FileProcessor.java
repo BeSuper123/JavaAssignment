@@ -51,45 +51,51 @@ public class FileProcessor {
         }
     }
 
-    public void frequencyTable() {
+    public String frequencyTable() {
         File fileHandler = openFile();
         HashMap<String, Integer> frequencyMap = new HashMap<>();
-
+        StringBuilder result = new StringBuilder();
+    
         try (Scanner sc = new Scanner(fileHandler)) {
             if (sc.hasNextLine()) {
                 sc.nextLine(); // skip header
             }
-
+    
             while (sc.hasNextLine()) {
                 String text = sc.nextLine();
                 String[] values = text.split(",");
-
+    
                 if (values.length < 5) {
                     continue;
                 }
-
+    
                 String attendance = values[0].trim();
                 String job = values[1].trim();
                 String submissions = values[2].trim();
                 String studyhours = values[3].trim();
                 String graduated = values[4].trim();
-
+    
                 String key = attendance + "\t" + job + "\t" + submissions + "\t" + studyhours + "\t" + graduated;
                 frequencyMap.put(key, frequencyMap.getOrDefault(key, 0) + 1);
             }
         } catch (FileNotFoundException e) {
-            System.err.println("File not found: " + fileHandler.getName());
+            return "File not found: " + fileHandler.getName();
         }
+    
+        result.append("\n\t\t----Frequency Table----\n");
+        result.append("Attendance \tJob \tSubmissions \tStudy Hours \tGratuated\n");
 
-
-        
-        // Print frequency table
-        System.out.println("\n\t----Frequency Table----");
+    
         for (Map.Entry<String, Integer> entry : frequencyMap.entrySet()) {
-            double percentage = ( entry.getValue() / 200.0) * 100;
-            System.out.println(entry.getKey() + " | " + percentage + "%");
+            double percentage = (entry.getValue() / 200.0) * 100;
+            result.append(entry.getKey())
+                .append("\t| ")
+                .append(String.format("%.2f", percentage))
+                .append("%\n");
         }
-    }
+    
+        return result.toString();
+    }    
 }
 
 
