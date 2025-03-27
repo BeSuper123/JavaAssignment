@@ -30,8 +30,12 @@ This is where the main method is and the purpose of this class is to *display* t
 ## Functionality
 - The GUI is used for the text fields *(user input)*
 - Predictions using the hardcoded information given
-- The GUI displays the frequency using percentages
+- Display the frequency using percentages
 - Display and save student entries
+
+---
+
+## Future Improvements
 
 ---
 
