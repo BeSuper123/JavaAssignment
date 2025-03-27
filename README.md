@@ -12,18 +12,18 @@ It is based on data from a file which is catagorised has data from a training da
 ## Class Descriptions
 
 ### FileProcessor Class
-
----
+The purpose of this class is...
 
 ### MyWindow Class
+The purpose of this class is...
 
----
 
 ### Student
+The purpose of this class is...
 
----
 
 ### Control
+The purpose of this class is...
 
 
 ---
