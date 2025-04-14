@@ -24,36 +24,37 @@ public class FileProcessor {
     }
 
     // method to read the file
-    public void readFile() {
+    public ArrayList<Student> readFile() {
         File fileHandler = openFile();
-        ArrayList<String> exam = new ArrayList<>();
-        
-        // adds the line to the list
+        ArrayList<Student> students = new ArrayList<>();
+
         try (Scanner sc = new Scanner(fileHandler)) {
-            while (sc.hasNextLine()) {
-                exam.add(sc.nextLine());
+            if (sc.hasNextLine()) {
+                sc.nextLine(); // skips the header because it is not important
             }
-
-            int i = 0;
+    
             while (sc.hasNextLine()) {
-                System.out.println(exam.get(i));
-                i++;
+                String line = sc.nextLine();
+                String[] values = line.split(",");
+    
+                if (values.length < 5) continue;
+    
+                String attendance = values[0].trim();
+                String job = values[1].trim();
+                String submissions = values[2].trim();
+                String studyhours = values[3].trim();
+                String graduated = values[4].trim();
+    
+                // Convert string to Student object
+                Student student = new Student(attendance, job, submissions, studyhours, graduated);
+                students.add(student);
             }
-
+    
         } catch (FileNotFoundException e) {
             System.err.println("File not found: " + filename);
         }
-
-        // prints each line
-        try (Scanner sc = new Scanner(fileHandler)) {
-            for (int i = 0; i < exam.size(); i++) {
-                System.out.println(exam.get(i));
-                }
-
-        } catch (FileNotFoundException e) {
-            System.err.println("File not found: " + filename);
-        }
-
+    
+        return students;
     }
 
     // method to write into the file
@@ -119,6 +120,49 @@ public class FileProcessor {
     
         // returns the result
         return result.toString();
+    }    
+
+    // method to get the prediction
+    public String getPrediction(String a, String j, String s, String st) {
+        // opens the file
+        File fileHandler = openFile();
+    
+        try (Scanner sc = new Scanner(fileHandler)) {
+            if (sc.hasNextLine()) {
+                sc.nextLine(); // skips header because it is not important
+            }
+            
+            // while there is another line, seperates each value
+            while (sc.hasNextLine()) {
+                String text = sc.nextLine();
+                String[] values = text.split(",");
+    
+                // if the value is lower than 5 it keeps going on that line
+                if (values.length < 6) {
+                    continue;
+                }
+    
+                String attendance = values[0].trim();
+                String job = values[1].trim();
+                String submissions = values[2].trim();
+                String studyhours = values[3].trim();
+                String graduatedNo = values[4].trim();
+                String graduatedYes = values[5].trim();
+                Integer no = Integer.valueOf(graduatedNo);
+                Integer yes = Integer.valueOf(graduatedYes);
+
+    
+                if (attendance.equalsIgnoreCase(a) && job.equalsIgnoreCase(j) &&
+                submissions.equalsIgnoreCase(s) && studyhours.equalsIgnoreCase(st)) {
+                    return "Chances of \"Student is Graduated\" is " + String.format("%.2f", (yes * 100.0) / (yes + no)) + "%";
+                }
+            }
+        } catch (FileNotFoundException e) {
+            return "File not found";
+        }
+    
+        // returns the null
+        return "No Matches Found for Input: " + a + ", " + j + ", " + s + ", " + st;
     }    
 }
 

@@ -12,7 +12,7 @@ import javax.swing.*;
 
 public class MyWindow extends JFrame {
     // attributes
-    JButton addStudentButton, frequencyTableButton, predictButton;
+    JButton addStudentButton, frequencyTableButton, predictButton, accuracyButton;
     JTextField attendance, job, submissions, studyhours, graduated;
     JTextArea displayArea;
     JLabel label1, label2, label3, label4, label5;
@@ -40,6 +40,7 @@ public class MyWindow extends JFrame {
         addStudentButton = new JButton("Add Student");
         frequencyTableButton = new JButton("Frequency Table");
         predictButton = new JButton("Predict");
+        accuracyButton = new JButton("Check Accuracy");
 
         // added a display area
         displayArea = new JTextArea(15, 50);
@@ -74,6 +75,7 @@ public class MyWindow extends JFrame {
         add(addStudentButton);
         add(frequencyTableButton); 
         add(predictButton);
+        add(accuracyButton);
         add(new JScrollPane(displayArea));
 
         // changed the colour of the buttons to purple
@@ -84,14 +86,20 @@ public class MyWindow extends JFrame {
         frequencyTableButton.setForeground(Color.BLACK);
         predictButton.setBackground(buttonColour);
         predictButton.setForeground(Color.BLACK);
+        accuracyButton.setBackground(buttonColour);
+        accuracyButton.setForeground(Color.BLACK);
 
         // button listeners
         addStudentButton.addActionListener(e -> addStudent());
         frequencyTableButton.addActionListener(e -> showFrequencyTable());
         predictButton.addActionListener(e -> predict());
+        accuracyButton.addActionListener(e -> checkAccuracy());
+
 
         setVisible(true);
     }
+    // creating another instance of the fileprocessor class for the training data
+    FileProcessor freqTable = new FileProcessor("freqTable.csv");
 
     private void addStudent() {
         String a = attendance.getText();
@@ -134,21 +142,39 @@ public class MyWindow extends JFrame {
 
         // checks if the values are empty, and if so shows an error message
         if (a.isEmpty() || j.isEmpty() || s.isEmpty() || h.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "All fields (except Graduated) must be filled!", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "All fields must be filled!", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
-        // uses different combinations 
-        String prediction;
-        if (a.equals("high") && j.equals("job") && s.equals("ontime") && h.equals("many")) {
-            prediction = "Prediction: YES (high chance of graduating)";
-        } else if (a.equals("low") && j.equals("job") && h.equals("few")) {
-            prediction = "Prediction: NO (low chance of graduating)";
-        } else {
-            prediction = "Prediction: MAYBE (insufficient rule match)";
+        // uses different combinations         
+        displayArea.setText(freqTable.getPrediction(a, j, s, h));
+    }
+
+    private void checkAccuracy() {
+        ArrayList<Student> allData = fp.readFile();
+
+        if (allData.size() < 200) {
+            displayArea.setText("Please add at least 200 rows");
         }
 
-        displayArea.setText(prediction);
+        ArrayList<Student> trainingSet = new ArrayList<>(allData.subList(0, 150));
+        ArrayList<Student> testSet = new ArrayList<>(allData.subList(150, 200));
+
+        Predictor p = new Predictor();
+        p.train(trainingSet);
+
+        int correct = 0;
+
+        for (Student testStudent : testSet) {
+            String predicted = p.predict(testStudent);
+            if (predicted.equalsIgnoreCase(testStudent.getGraduated())) {
+                correct++;
+            }
+        }
+    
+        double accuracy = (correct / 50.0) * 100;
+        displayArea.setText("Model Accuracy: " + String.format("%.2f", accuracy) + "%\nCorrect Predictions: " + correct + " out of 50");
+    
     }
 }
  
