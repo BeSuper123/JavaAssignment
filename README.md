@@ -22,6 +22,8 @@ This class also *displays* all the predictive data for the student features, thi
 ### Student:
 A model class representing one student's data and purpose of it is to *take in* student information and *format* the new student data from the user to append into the file.
 
+### `Predictor`:
+A model class representing one student's data and purpose of it is to *take in* student information and *format* the new student data from the user to append into the file.
 
 ### Control:
 This is where the main method is and the purpose of this class is to *display* the screen with all the details of it from the **MyWindow** table
