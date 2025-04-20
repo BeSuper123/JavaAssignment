@@ -1,61 +1,74 @@
 import java.util.*;
 
 public class Predictor {
+    private Map<String, Integer> labelCount = new HashMap<>();
+    private Map<String, Map<String, Integer>> featureCount = new HashMap<>();
+    private int totalStudents = 0;
 
-    private Map<String, Integer> labelCounts = new HashMap<>(); // e.g., yes=120, no=80
-    private Map<String, Map<String, Integer>> featureLabelCounts = new HashMap<>();
-    private int totalExamples = 0;
+    // trains the model with a list of student objects
+    public void train(List<Student> students) {
+        labelCount.clear();
+        featureCount.clear();
+        totalStudents = students.size();
 
-    // Train the model with a list of Student objects
-    public void train(List<Student> trainingData) {
-        labelCounts.clear();
-        featureLabelCounts.clear();
-        totalExamples = trainingData.size();
-
-        for (Student s : trainingData) {
+        for (Student s : students) {
             String label = s.getGraduated();
-            labelCounts.put(label, labelCounts.getOrDefault(label, 0) + 1);
 
-            addFeatureCount("attendance=" + s.getAttendance(), label);
-            addFeatureCount("job=" + s.getJob(), label);
-            addFeatureCount("submissions=" + s.getSubmissions(), label);
-            addFeatureCount("studyhours=" + s.getStudyhours(), label);
+            // counts how many times each label appears
+            labelCount.merge(label, 1, Integer::sum);
+
+            // counts how often each feature value appears with the label
+            addFeature("attendance=" + s.getAttendance(), label);
+            addFeature("job=" + s.getJob(), label);
+            addFeature("submissions=" + s.getSubmissions(), label);
+            addFeature("studyhours=" + s.getStudyhours(), label);
         }
     }
 
-    private void addFeatureCount(String feature, String label) {
+    // method to update feature counts
+    private void addFeature(String feature, String label) {
         String key = feature + "|" + label;
-        featureLabelCounts.putIfAbsent(key, new HashMap<>());
-        Map<String, Integer> countMap = featureLabelCounts.get(key);
+
+        // creates a new map for if the key doesn't exist
+        featureCount.putIfAbsent(key, new HashMap<>());
+
+        Map<String, Integer> countMap = featureCount.get(key);
         countMap.put(label, countMap.getOrDefault(label, 0) + 1);
     }
 
-    // Predict label based on feature values in Student
+    // method to make a prediction for a student
     public String predict(Student s) {
-        double yesProb = calculateLabelProbability("yes", s);
-        double noProb = calculateLabelProbability("no", s);
+        double yesProb = calcProbability("yes", s);
+        double noProb = calcProbability("no", s);
 
-        return (yesProb > noProb) ? "yes" : "no";
+        if (yesProb > noProb) {
+            return "yes";
+        } else {
+            return "no";
+        }
     }
 
-    private double calculateLabelProbability(String label, Student s) {
-        double labelProb = (double) labelCounts.getOrDefault(label, 0) / totalExamples;
+    // method to calculate the probability for a label
+    private double calcProbability(String label, Student s) {
+        double labelProb = (double) labelCount.getOrDefault(label, 0) / totalStudents;
         double conditionalProb = 1.0;
 
-        conditionalProb *= getConditionalProbability("attendance=" + s.getAttendance(), label);
-        conditionalProb *= getConditionalProbability("job=" + s.getJob(), label);
-        conditionalProb *= getConditionalProbability("submissions=" + s.getSubmissions(), label);
-        conditionalProb *= getConditionalProbability("studyhours=" + s.getStudyhours(), label);
+        conditionalProb *= getProb("attendance" + s.getAttendance(), label);
+        conditionalProb *= getProb("job" + s.getJob(), label);
+        conditionalProb *= getProb("submissions" + s.getSubmissions(), label);
+        conditionalProb *= getProb("studyhours" + s.getStudyhours(), label);
 
         return labelProb * conditionalProb;
     }
 
-    private double getConditionalProbability(String feature, String label) {
+    // method to get the conditional probabilty of a feature given the label (yes/no)
+    private double getProb(String feature, String label) {
         String key = feature + "|" + label;
-        int count = featureLabelCounts.getOrDefault(key, new HashMap<>()).getOrDefault(label, 0);
-        int labelTotal = labelCounts.getOrDefault(label, 0);
 
-        // Laplace smoothing: add-one smoothing
+        int count = featureCount.getOrDefault(key, new HashMap<>()).getOrDefault(label, 0);
+        int labelTotal = labelCount.getOrDefault(label, 0);
+
+        // returns to avoid 0 probability
         return (count + 1.0) / (labelTotal + 2.0);
     }
 }

@@ -12,6 +12,7 @@ import java.util.*;
 public class FileProcessor {
     //atribute
     private String filename;
+    private double totalValues = 201;
 
     //constructor
     public FileProcessor(String filename) {
@@ -62,8 +63,9 @@ public class FileProcessor {
         try (PrintWriter pw = new PrintWriter(new FileWriter(filename, true))) { 
             pw.println(text);
             pw.close();
+            totalValues += 1;
         } catch (IOException ex) {
-            System.err.println("Error writing to file: " + ex.getMessage());
+            System.err.println("Error writing to file");
         }
     }
 
@@ -97,11 +99,11 @@ public class FileProcessor {
                 String studyhours = values[3].trim();
                 String graduated = values[4].trim();
     
-                String key = attendance + "\t" + job + "\t" + submissions + "\t" + studyhours + "\t" + graduated;
-                frequencyMap.put(key, frequencyMap.getOrDefault(key, 0) + 1);
+                String row = attendance + "\t" + job + "\t" + submissions + "\t" + studyhours + "\t" + graduated;
+                frequencyMap.put(row, frequencyMap.getOrDefault(row, 0) + 1);
             }
         } catch (FileNotFoundException e) {
-            return "File not found: " + fileHandler.getName();
+            return "File not found";
         }
     
         // prints the frequency table
@@ -111,7 +113,7 @@ public class FileProcessor {
         // organises the data using a hash map
         for (HashMap.Entry<String, Integer> entry : frequencyMap.entrySet()) {
             // gets the percentage of the values in the file
-            double percentage = (entry.getValue() / 200.0) * 100;
+            double percentage = (entry.getValue() / totalValues) * 100;
             result.append(entry.getKey())
                 .append("\t| ")
                 .append(String.format("%.2f", percentage))
@@ -137,7 +139,7 @@ public class FileProcessor {
                 String text = sc.nextLine();
                 String[] values = text.split(",");
     
-                // if the value is lower than 5 it keeps going on that line
+                // if the value is lower than 6 it keeps going on that line
                 if (values.length < 6) {
                     continue;
                 }
@@ -148,10 +150,12 @@ public class FileProcessor {
                 String studyhours = values[3].trim();
                 String graduatedNo = values[4].trim();
                 String graduatedYes = values[5].trim();
+                
+                // changes the string values to integers
                 Integer no = Integer.valueOf(graduatedNo);
                 Integer yes = Integer.valueOf(graduatedYes);
 
-    
+                // checks if the entry given is in the dataset
                 if (attendance.equalsIgnoreCase(a) && job.equalsIgnoreCase(j) &&
                 submissions.equalsIgnoreCase(s) && studyhours.equalsIgnoreCase(st)) {
                     return "Chances of \"Student is Graduated\" is " + String.format("%.2f", (yes * 100.0) / (yes + no)) + "%";

@@ -78,7 +78,7 @@ public class MyWindow extends JFrame {
         add(accuracyButton);
         add(new JScrollPane(displayArea));
 
-        // changed the colour of the buttons to purple
+        // changed the colour of the buttons to turquoise
         Color buttonColour = new Color(640128);
         addStudentButton.setBackground(buttonColour);
         addStudentButton.setForeground(Color.BLACK);
@@ -95,9 +95,9 @@ public class MyWindow extends JFrame {
         predictButton.addActionListener(e -> predict());
         accuracyButton.addActionListener(e -> checkAccuracy());
 
-
         setVisible(true);
     }
+
     // creating another instance of the fileprocessor class for the training data
     FileProcessor freqTable = new FileProcessor("freqTable.csv");
 
@@ -113,11 +113,20 @@ public class MyWindow extends JFrame {
             return;
         }
 
+        // add student to csv file
         Student s1 = new Student(a, j, s, h, g);
         fp.writeLine(s1.toString());
 
-        JOptionPane.showMessageDialog(this, "Student Details Added: " + s1.toString(), "Student Saved", JOptionPane.INFORMATION_MESSAGE);
+        ArrayList<Student> updatedData = fp.readFile();
+        Predictor p = new Predictor();
+        p.train(updatedData);
 
+        JOptionPane.showMessageDialog(this, "Student Details Added: " + s1.toString(), "Student Saved and Classifier Updated", JOptionPane.INFORMATION_MESSAGE);
+
+        clearText();
+    }
+
+    private void clearText() {
         attendance.setText("");
         job.setText("");
         submissions.setText("");
@@ -174,7 +183,6 @@ public class MyWindow extends JFrame {
     
         double accuracy = (correct / 50.0) * 100;
         displayArea.setText("Model Accuracy: " + String.format("%.2f", accuracy) + "%\nCorrect Predictions: " + correct + " out of 50");
-    
     }
 }
  
