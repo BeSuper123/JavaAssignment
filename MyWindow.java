@@ -1,9 +1,10 @@
 /*
  * Description: The purpose of this class is to display all the
  * text fields and buttons on the screen and show the array list of students
- * and make a prediction using hardcoded data
+ * and make a prediction using hardcoded data. It contains 4 main buttons, add 
+ * student, check accuracy, train, and predict
  * Author: Blessing Ugochukwu
- * Date: 27/03/2025
+ * Date: 23/04/2025
  */
 
 import java.awt.*;

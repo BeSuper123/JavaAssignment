@@ -1,7 +1,8 @@
 /*
  * Description: The purpose of this class is to have all
  * the file data within, such as open file, read,  and write 
- * also having the frequency table
+ * also having the frequency table to get the predictions.
+ * All the objects were found through the oracle tutorial website
  * Author: Blessing Ugochukwu
  * Date: 27/03/2025
  */

@@ -1,3 +1,11 @@
+/*
+ * Description: The purpose of this class is to training and predicton using the Naive Bayes
+ * Classifier algorithm. it uses the GUI to predict whether a student will graduate or not, 
+ * and it checks how acurate the model is by testing it.
+ * Author: Blessing Ugochukwu
+ * Date: 23/04/2025
+ */
+
 import java.util.*;
 
 public class Predictor {

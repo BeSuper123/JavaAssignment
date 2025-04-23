@@ -51,11 +51,11 @@ This is where the main method is and the purpose of this class is to *display* t
 ---
 
 ## Demo Video
-YouTube Video - .....
+[YouTube Video](https://youtu.be/mMKb-s587fY)
 
 ---
 
 ## Git Repository
-Link - [.....](https://github.com/BeSuper123/JavaAssignment)
+[Link](https://github.com/BeSuper123/JavaAssignment)
 
 ---
