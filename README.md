@@ -23,7 +23,7 @@ This class also *displays* all the predictive data for the student features, thi
 A model class representing one student's data and purpose of it is to *take in* student information and *format* the new student data from the user to append into the file.
 
 ### `Predictor:`
-It trains a Naive Bayes model dynamically using the dataset given. It predicts the labes (yes or no) for the students. 
+It trains a Naive Bayes model dynamically using the dataset given. It predicts the labels (yes or no) for the students. 
 Calculates probabilities for each possible label (16 probable oucomes).
 
 ### `Control:`
@@ -31,14 +31,22 @@ This is where the main method is and the purpose of this class is to *display* t
 
 ---
 ## Functionality
-- The GUI is used for the text fields *(user input)*
-- Predictions using the hardcoded information given
-- Display the frequency using percentages
-- Display and save student entries
+- The GUI is used for the text fields *(user input)* and submitting student data.
+- Predictions using the hardcoded information from given csv.
+- Dynamic Naive Bayes clasifier training.
+- Display the frequency table with features using percentages.
+- Predict button predicts the percentage of an outcome using the hardcoded csv
+- Acurracy checker trains 150 students and tests on 50 students.
+- Displays correct predictions as well as the model's accuracy.
 
 ---
 
 ## Future Improvements
+- Add error checking to restrict input values to the expected values (e.g., studyhours = high/low).
+- Auto update the dataset after a new entry.
+- Show prediction probabilities alongside the predicted label.
+- Save the results to a log file.
+- Style the GUI better with a better flow and design inluding better colour contrast.
 
 ---
 
