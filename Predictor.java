@@ -15,17 +15,27 @@ public class Predictor {
 
     // trains the model with a list of student objects
     public void train(List<Student> students) {
+        // resets the counts
         labelCount.clear();
         featureCount.clear();
+
+        // sets the total number of students
         totalStudents = students.size();
 
         for (Student s : students) {
+            // gets the student's graduation status
             String label = s.getGraduated();
 
             // counts how many times each label appears
-            labelCount.merge(label, 1, Integer::sum);
+            Integer currentCount = labelCount.get(label);
+            if (currentCount == null) {
+                labelCount.put(label, 1);
+            }
+            else {
+                labelCount.put(label, currentCount + 1);
+            }
 
-            // counts how often each feature value appears with the label
+            // updates how many times feature appears
             addFeature("attendance=" + s.getAttendance(), label);
             addFeature("job=" + s.getJob(), label);
             addFeature("submissions=" + s.getSubmissions(), label);
@@ -37,14 +47,24 @@ public class Predictor {
     private void addFeature(String feature, String label) {
         String key = feature + "|" + label;
 
-        // creates a new map for if the key doesn't exist
-        featureCount.putIfAbsent(key, new HashMap<>());
+        // checks if the feature already exists in the featureCount map
+        Map<String, Integer> labelMap = featureCount.get(key);
+        if (labelMap == null) {
+            labelMap = new HashMap<>();
+            featureCount.put(key, labelMap);
+        }
 
-        Map<String, Integer> countMap = featureCount.get(key);
-        countMap.put(label, countMap.getOrDefault(label, 0) + 1);
+        // updates how many times the feature label pair exists
+        Integer currentCount = labelMap.get(label);
+        if (currentCount == null) {
+            labelMap.put(label, 1);
+        }
+        else {
+            labelMap.put(label, currentCount + 1);
+        }
     }
 
-    // method to make a prediction for a student
+    // method to make a prediction for a student whether they will graduate or not
     public String predict(Student s) {
         double yesProb = calcProbability("yes", s);
         double noProb = calcProbability("no", s);
@@ -56,25 +76,49 @@ public class Predictor {
         }
     }
 
-    // method to calculate the probability for a label
+    // method to calculate the probability that a student belongs to a specific label
     private double calcProbability(String label, Student s) {
-        double labelProb = (double) labelCount.getOrDefault(label, 0) / totalStudents;
-        double conditionalProb = 1.0;
+        Integer totalLabelCount = labelCount.get(label);
+        if (totalLabelCount == null) {
+            totalLabelCount = 0;
+        }
 
+        double labelProb = 0;
+        if (totalStudents > 0) {
+            // makes value a double to avoid an outcome of zero
+            labelProb = (double) totalLabelCount / totalStudents;
+        }
+         
+        double conditionalProb = 1.0; // starts with a neutral probability
+
+        // multiplies the probability for each feature
         conditionalProb *= getProb("attendance" + s.getAttendance(), label);
         conditionalProb *= getProb("job" + s.getJob(), label);
         conditionalProb *= getProb("submissions" + s.getSubmissions(), label);
         conditionalProb *= getProb("studyhours" + s.getStudyhours(), label);
 
+        // returns the labal probability multiplied by all the feature probabilities
         return labelProb * conditionalProb;
     }
 
     // method to get the conditional probabilty of a feature given the label (yes/no)
     private double getProb(String feature, String label) {
-        String key = feature + "|" + label;
+        String key = feature + "|" + label; // unique key
 
-        int count = featureCount.getOrDefault(key, new HashMap<>()).getOrDefault(label, 0);
-        int labelTotal = labelCount.getOrDefault(label, 0);
+        int count = 0;
+        Map<String, Integer> labelMap = featureCount.get(key);
+        if (labelMap != null) {
+            Integer found = labelMap.get(label);
+            if (found != null) {
+                count = found;
+            }
+        }
+
+        int labelTotal = 0;
+        Integer total = labelCount.get(label);
+        if (total != null) {
+            labelTotal = total;
+        }
 
         // returns to avoid 0 probability
         return (count + 1.0) / (labelTotal + 2.0);
